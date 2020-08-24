@@ -1,14 +1,26 @@
-// import readlineSync from 'readline-sync'
-let readlineSync = require("readline-sync");
+const inquirer = require("inquirer");
 
-console.log("Hi my friends");
+const question = [
+  {
+    type: "password",
+    name: "password",
+    message: "What's your password",
+  },
+  {
+    type: "input",
+    name: "name",
+    message: "What's yourname",
+  },
+  {
+    type: "number",
+    name: "siblings",
+    message: "How many brothers or sisters do you have?",
+  },
+];
 
-let password = readlineSync.question(`Which is your password?`, {
-  hideEchoBack: true,
+// Con prompt llamamos a la llamada y le decimos que lo que viene se llama respuesta. Va por orden, primero te pregunta la de la contrasena y luego la del nombre.
+inquirer.prompt(question).then((answers) => {
+  console.log(`Your password is ${answers.password}!`);
+  console.log(`Your name is ${answers.name}!`);
+  console.log(`Your name is ${answers.siblings}!`);
 });
-console.log(password);
-
-(readlineSync = require("readline-sync")),
-  (animals = ["Lion", "Elephant", "Crocodile", "Giraffe", "Hippo"]),
-  (index = readlineSync.keyInSelect(animals, "Which animal?"));
-console.log("Ok, " + animals[index] + " goes to your room.");
