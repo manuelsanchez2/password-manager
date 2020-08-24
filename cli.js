@@ -1,5 +1,7 @@
 const inquirer = require("inquirer");
 
+const fs = require("fs");
+
 const questions = [
   {
     type: "password",
@@ -13,12 +15,19 @@ const questions = [
   },
 ];
 
-// Con prompt llamamos a la llamada y le decimos que lo que viene se llama respuesta. Va por orden, primero te pregunta la de la contrasena y luego la del nombre.
 inquirer.prompt(questions).then((answers) => {
-  console.log(`Your password is ${answers.password}!`);
-  console.log(`Would you like to know the password of ${answers.key}?`);
+  console.log(`Your master password is ${answers.password}!`);
+
   if (answers.password === "123") {
     console.log("Password is right");
+    let passwordsJSON = fs.readFileSync("./passwords.json", "utf8");
+    let passwords = JSON.parse(passwordsJSON);
+    let service = answers.key;
+    if (passwords[service]) {
+      console.log(`Your ${answers.key} password is ${passwords[service]}`);
+    } else {
+      console.log(`There is no register of ${answers.key} yet`);
+    }
   } else {
     console.log("Password is wrong");
   }
