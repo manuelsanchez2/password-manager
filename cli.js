@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
 
-const fs = require("fs");
+const fs = require("fs").promises;
 
 const questions = [
   {
@@ -15,12 +15,12 @@ const questions = [
   },
 ];
 
-inquirer.prompt(questions).then((answers) => {
+inquirer.prompt(questions).then(async (answers) => {
   console.log(`Your master password is ${answers.password}!`);
 
   if (answers.password === "123") {
     console.log("Password is right");
-    let passwordsJSON = fs.readFileSync("./passwords.json", "utf8");
+    let passwordsJSON = await fs.readFile("./passwords.json", "utf8");
     let passwords = JSON.parse(passwordsJSON);
     let service = answers.key;
     if (passwords[service]) {
