@@ -1,26 +1,25 @@
 const inquirer = require("inquirer");
 
-const question = [
+const questions = [
   {
     type: "password",
     name: "password",
-    message: "What's your password",
+    message: "What's your master password",
   },
   {
     type: "input",
-    name: "name",
-    message: "What's yourname",
-  },
-  {
-    type: "number",
-    name: "siblings",
-    message: "How many brothers or sisters do you have?",
+    name: "key",
+    message: "Which password do you need?",
   },
 ];
 
 // Con prompt llamamos a la llamada y le decimos que lo que viene se llama respuesta. Va por orden, primero te pregunta la de la contrasena y luego la del nombre.
-inquirer.prompt(question).then((answers) => {
+inquirer.prompt(questions).then((answers) => {
   console.log(`Your password is ${answers.password}!`);
-  console.log(`Your name is ${answers.name}!`);
-  console.log(`Your name is ${answers.siblings}!`);
+  console.log(`Would you like to know the password of ${answers.key}?`);
+  if (answers.password === "123") {
+    console.log("Password is right");
+  } else {
+    console.log("Password is wrong");
+  }
 });
