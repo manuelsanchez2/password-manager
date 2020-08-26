@@ -25,5 +25,19 @@ async function writePassword(key, decryptedPassword, masterPassword) {
   await writePasswords(passwords);
 }
 
+async function readMasterPassword() {
+  try {
+    const masterPassword = await fs.readFile("./masterPassword", "utf-8");
+    return masterPassword;
+  } catch (error) {
+    return null;
+  }
+}
+async function writeMasterPassword(masterPassword) {
+  await fs.writeFile("./masterPassword", masterPassword);
+}
+
 exports.readPassword = readPassword;
 exports.writePassword = writePassword;
+exports.readMasterPassword = readMasterPassword;
+exports.writeMasterPassword = writeMasterPassword;

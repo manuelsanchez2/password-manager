@@ -1,35 +1,53 @@
 const fs = require("fs").promises;
-const { readPassword, writePassword } = require("./libraries/passwords");
+const {
+  readPassword,
+  writePassword,
+  readMasterPassword,
+  writeMasterPassword,
+} = require("./libraries/passwords");
 const {
   CHOICE_SET,
   CHOICE_GET,
-  askStartQuestions,
+  askStartQuestion,
+  askOperationQuestion,
+  askForNewMasterPassword,
   askGetPasswordQuestions,
   askSetPasswordQuestions,
 } = require("./libraries/questions");
 
 async function main() {
-  const { masterPassword, operation } = await askStartQuestions();
+  const originalMasterPassword = await readMasterPassword();
 
-  if (masterPassword === "123") {
-    console.log("You have introduced the right Master Password");
-    if (operation === CHOICE_GET) {
-      console.log("Now you want to know one password, eh?");
-      const { key } = await askGetPasswordQuestions();
-      try {
-        const password = await readPassword(key, masterPassword);
-        console.log(`Your ${key} password is ${password}`);
-      } catch (error) {
-        console.error("Something went wrong 😑");
-      }
-    } else if (operation === CHOICE_SET) {
-      console.log("Now you are setting a new password");
-      const { key, password } = await askSetPasswordQuestions();
-      await writePassword(key, password, masterPassword);
-      console.log(`New Password set`);
-    }
-  } else {
+  if (!originalMasterPassword) {
+    const { newMasterPassword } = await askForMasterPassword();
+    await writeMasterPassword(newMasterPassword);
+    console.log("Master Password is set");
+    return;
+  }
+
+  const { masterPassword } = await askStartQuestion();
+  if (masterPassword !== originalMasterPassword) {
     console.log("This is not the right Master Password");
+    return;
+  }
+
+  const { operation } = await askOperationQuestion();
+
+  console.log("You have introduced the right Master Password");
+  if (operation === CHOICE_GET) {
+    console.log("Now you want to know one password, eh?");
+    const { key } = await askGetPasswordQuestions();
+    try {
+      const password = await readPassword(key, masterPassword);
+      console.log(`Your ${key} password is ${password}`);
+    } catch (error) {
+      console.error("Something went wrong 😑", error);
+    }
+  } else if (operation === CHOICE_SET) {
+    console.log("Now you are setting a new password");
+    const { key, password } = await askSetPasswordQuestions();
+    await writePassword(key, password, masterPassword);
+    console.log(`New Password set`);
   }
 }
 
