@@ -18,6 +18,7 @@ async function main() {
       const { key } = await askGetPasswordQuestions();
       try {
         const password = await readPassword(key);
+
         console.log(`Your ${key} password is ${password}`);
       } catch (error) {
         console.error("Something went wrong 😑");
@@ -25,7 +26,7 @@ async function main() {
     } else if (operation === CHOICE_SET) {
       console.log("Now you are setting a new password");
       const { key, password } = await askSetPasswordQuestions();
-      await writePassword(key, password);
+      await writePassword(key, password, masterPassword);
       console.log(`New Password set`);
     }
   } else {

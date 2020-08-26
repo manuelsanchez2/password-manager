@@ -1,3 +1,5 @@
+const { decrypt, encrypt } = require("./crypto");
+
 const fs = require("fs").promises;
 
 async function readPasswords() {
@@ -14,13 +16,13 @@ async function writePasswords(passwords) {
 async function readPassword(key) {
   const passwords = await readPasswords();
   const encryptedPassword = passwords[key];
-  const decryptedPassword = decrypt(masterPassword, encryptedPassword);
+  const decryptedPassword = decrypt(encryptedPassword, masterPassword);
   return decryptedPassword;
 }
 
 async function writePassword(key, decryptedPassword, masterPassword) {
   const passwords = await readPasswords();
-  passwords[key] = encrypt(masterPassword, decryptedPassword);
+  passwords[key] = encrypt(decryptedPassword, masterPassword);
   await writePasswords(passwords);
 }
 
