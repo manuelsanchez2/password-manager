@@ -1,5 +1,5 @@
 const fs = require("fs").promises;
-const { readPassword } = require("./libraries/passwords");
+const { readPassword, writePassword } = require("./libraries/passwords");
 const {
   CHOICE_SET,
   CHOICE_GET,
@@ -24,8 +24,9 @@ async function main() {
       }
     } else if (operation === CHOICE_SET) {
       console.log("Now you are setting a new password");
-      const { key, newPassword } = await askSetPasswordQuestions();
-      console.log(`Your new password is ${key} = ${newPassword}`);
+      const { key, password } = await askSetPasswordQuestions();
+      await writePassword(key, password);
+      console.log(`New Password set`);
     }
   } else {
     console.log("This is not the right Master Password");

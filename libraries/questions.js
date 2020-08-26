@@ -33,7 +33,7 @@ const questionsSet = [
   },
   {
     type: "password",
-    name: "newPassword",
+    name: "password",
     message: "Please enter the new password 🙈",
   },
 ];
