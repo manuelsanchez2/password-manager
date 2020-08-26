@@ -1,3 +1,5 @@
+const { decrypt, encrypt } = require("./crypto");
+
 const fs = require("fs").promises;
 
 async function readPasswords() {
@@ -11,17 +13,31 @@ async function writePasswords(passwords) {
   await fs.writeFile("./passwords.json", passwordsJSON);
 }
 
-async function readPassword(key) {
+async function readPassword(key, masterPassword) {
   const passwords = await readPasswords();
-  const password = passwords[key];
-  return password;
+  const decryptedPassword = decrypt(passwords[key], masterPassword);
+  return decryptedPassword;
 }
 
-async function writePassword(key, value) {
+async function writePassword(key, decryptedPassword, masterPassword) {
   const passwords = await readPasswords();
-  passwords[key] = value;
+  passwords[key] = encrypt(decryptedPassword, masterPassword);
   await writePasswords(passwords);
+}
+
+async function readMasterPassword() {
+  try {
+    const masterPassword = await fs.readFile("./masterPassword", "utf-8");
+    return masterPassword;
+  } catch (error) {
+    return null;
+  }
+}
+async function writeMasterPassword(masterPassword) {
+  await fs.writeFile("./masterPassword", masterPassword);
 }
 
 exports.readPassword = readPassword;
 exports.writePassword = writePassword;
+exports.readMasterPassword = readMasterPassword;
+exports.writeMasterPassword = writeMasterPassword;

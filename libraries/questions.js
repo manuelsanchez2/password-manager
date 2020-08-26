@@ -3,12 +3,15 @@ const inquirer = require("inquirer");
 const CHOICE_GET = "Check existing password";
 const CHOICE_SET = "Create new password";
 
-const initialQuestions = [
+const initialQuestion = [
   {
     type: "password",
     name: "masterPassword",
     message: "What's your master password?",
   },
+];
+
+const operationQuestion = [
   {
     type: "list",
     name: "operation",
@@ -38,8 +41,19 @@ const questionsSet = [
   },
 ];
 
-function askStartQuestions() {
-  return inquirer.prompt(initialQuestions);
+const questionNewMasterPassword = [
+  {
+    type: "password",
+    name: "newMasterPassword",
+    message: "Please enter your new master password",
+  },
+];
+
+function askStartQuestion() {
+  return inquirer.prompt(initialQuestion);
+}
+function askOperationQuestion() {
+  return inquirer.prompt(operationQuestion);
 }
 
 function askGetPasswordQuestions() {
@@ -50,8 +64,14 @@ function askSetPasswordQuestions() {
   return inquirer.prompt(questionsSet);
 }
 
-exports.askStartQuestions = askStartQuestions;
+function askForNewMasterPassword() {
+  return inquirer.prompt(questionNewMasterPassword);
+}
+
+exports.askStartQuestion = askStartQuestion;
+exports.askOperationQuestion = askOperationQuestion;
 exports.askGetPasswordQuestions = askGetPasswordQuestions;
 exports.askSetPasswordQuestions = askSetPasswordQuestions;
+exports.askForNewMasterPassword = askForNewMasterPassword;
 exports.CHOICE_GET = CHOICE_GET;
 exports.CHOICE_SET = CHOICE_SET;
