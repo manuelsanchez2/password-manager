@@ -41,7 +41,7 @@ const questionsSet = [
   },
 ];
 
-const questionsNewMasterPassword = [
+const questionNewMasterPassword = [
   {
     type: "password",
     name: "newMasterPassword",
@@ -65,7 +65,7 @@ function askSetPasswordQuestions() {
 }
 
 function askForNewMasterPassword() {
-  return inquirer.prompt(questionsNewMasterPassword);
+  return inquirer.prompt(questionNewMasterPassword);
 }
 
 exports.askStartQuestion = askStartQuestion;

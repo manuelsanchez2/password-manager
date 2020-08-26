@@ -14,13 +14,15 @@ const {
   askGetPasswordQuestions,
   askSetPasswordQuestions,
 } = require("./libraries/questions");
+const { createHash } = require("./libraries/crypto.js");
 
 async function main() {
   const originalMasterPassword = await readMasterPassword();
 
   if (!originalMasterPassword) {
-    const { newMasterPassword } = await askForMasterPassword();
-    await writeMasterPassword(newMasterPassword);
+    const { newMasterPassword } = await askForNewMasterPassword();
+    const hashedMasterPassword = await createHash(newMasterPassword);
+    await writeMasterPassword(hashedMasterPassword);
     console.log("Master Password is set");
     return;
   }
