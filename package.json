@@ -4,6 +4,7 @@
   "description": "Password Manager Example",
   "main": "cli.js",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "inquirer": "^7.3.3",
     "readline-sync": "^1.4.10"
   },

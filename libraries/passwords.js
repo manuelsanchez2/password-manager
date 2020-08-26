@@ -13,13 +13,14 @@ async function writePasswords(passwords) {
 
 async function readPassword(key) {
   const passwords = await readPasswords();
-  const password = passwords[key];
-  return password;
+  const encryptedPassword = passwords[key];
+  const decryptedPassword = decrypt(masterPassword, encryptedPassword);
+  return decryptedPassword;
 }
 
-async function writePassword(key, value) {
+async function writePassword(key, decryptedPassword, masterPassword) {
   const passwords = await readPasswords();
-  passwords[key] = value;
+  passwords[key] = encrypt(masterPassword, decryptedPassword);
   await writePasswords(passwords);
 }
 
