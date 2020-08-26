@@ -14,7 +14,7 @@ const {
   askGetPasswordQuestions,
   askSetPasswordQuestions,
 } = require("./libraries/questions");
-const { createHash } = require("./libraries/crypto.js");
+const { createHash, verifyHash } = require("./libraries/crypto.js");
 
 async function main() {
   const originalMasterPassword = await readMasterPassword();
@@ -28,7 +28,11 @@ async function main() {
   }
 
   const { masterPassword } = await askStartQuestion();
-  if (masterPassword !== originalMasterPassword) {
+  const comparedPassword = await verifyHash(
+    masterPassword,
+    originalMasterPassword
+  );
+  if (!comparedPassword) {
     console.log("This is not the right Master Password");
     return;
   }
