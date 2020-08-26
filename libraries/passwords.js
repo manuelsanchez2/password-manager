@@ -13,10 +13,9 @@ async function writePasswords(passwords) {
   await fs.writeFile("./passwords.json", passwordsJSON);
 }
 
-async function readPassword(key) {
+async function readPassword(key, masterPassword) {
   const passwords = await readPasswords();
-  const encryptedPassword = passwords[key];
-  const decryptedPassword = decrypt(encryptedPassword, masterPassword);
+  const decryptedPassword = decrypt(passwords[key], masterPassword);
   return decryptedPassword;
 }
 

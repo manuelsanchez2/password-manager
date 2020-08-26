@@ -17,8 +17,7 @@ async function main() {
       console.log("Now you want to know one password, eh?");
       const { key } = await askGetPasswordQuestions();
       try {
-        const password = await readPassword(key);
-
+        const password = await readPassword(key, masterPassword);
         console.log(`Your ${key} password is ${password}`);
       } catch (error) {
         console.error("Something went wrong 😑");
