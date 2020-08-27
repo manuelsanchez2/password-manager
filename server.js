@@ -24,8 +24,7 @@ async function main() {
     try {
       const { name } = request.params;
       const password = await readPassword(name, masterPassword, database);
-      const decryptedPassword = decrypt(password, masterPassword);
-      response.status(200).send(decryptedPassword);
+      response.status(200).send(password);
     } catch (error) {
       console.log("mal mal mal", error);
     }
@@ -34,8 +33,7 @@ async function main() {
   app.post("/api/passwords", async (request, response) => {
     console.log("POST on /api/passwords");
     const { name, value } = request.body;
-    const encryptedPassword = encrypt(value, masterPassword);
-    await writePassword(name, encryptedPassword, database);
+    await writePassword(name, value, masterPassword, database);
     response.status(201).send("Password created. Well done!");
   });
   app.listen(port, () => {
