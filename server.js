@@ -2,11 +2,13 @@ require("dotenv").config();
 
 const express = require("express");
 const { MongoClient } = require("mongodb");
-const { writePassword } = require("./libraries/passwords");
-const { encrypt } = require("./libraries/crypto");
+const { writePassword, readPassword } = require("./libraries/passwords");
+const { encrypt, decrypt } = require("./libraries/crypto");
 const bodyParser = require("body-parser");
 
-const client = new MongoClient(process.env.MONGO_URL);
+const client = new MongoClient(process.env.MONGO_URL, {
+  useUnifiedTopology: true,
+});
 
 const app = express();
 app.use(bodyParser.json());
@@ -18,8 +20,15 @@ async function main() {
   const database = client.db(process.env.MONGO_DB_NAME);
   const masterPassword = process.env.MASTER_PASSWORD;
 
-  app.listen(port, () => {
-    console.log(`App is listening on http://localhost:${port}`);
+  app.get("/api/passwords/:name", async (request, response) => {
+    try {
+      const { name } = request.params;
+      const password = await readPassword(name, masterPassword, database);
+      const decryptedPassword = decrypt(password, masterPassword);
+      response.status(200).send(decryptedPassword);
+    } catch (error) {
+      console.log("mal mal mal", error);
+    }
   });
 
   app.post("/api/passwords", async (request, response) => {
@@ -28,6 +37,9 @@ async function main() {
     const encryptedPassword = encrypt(value, masterPassword);
     await writePassword(name, encryptedPassword, database);
     response.status(201).send("Password created. Well done!");
+  });
+  app.listen(port, () => {
+    console.log(`App is listening on http://localhost:${port}`);
   });
 }
 main();
