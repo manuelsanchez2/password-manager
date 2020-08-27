@@ -1,4 +1,6 @@
 const fs = require("fs").promises;
+require("dotenv").config();
+
 const {
   readPassword,
   writePassword,
@@ -17,16 +19,16 @@ const {
 const { createHash, verifyHash } = require("./libraries/crypto.js");
 
 const { MongoClient } = require("mongodb");
-const uri =
-  "mongodb+srv://manusanchez2:manusanchez123@development.wdimo.mongodb.net?retryWrites=true&w=majority";
 
-const client = new MongoClient(uri);
+console.log(process.env);
+
+const client = new MongoClient(process.env.MONGO_URL);
 
 async function main() {
   try {
     await client.connect();
 
-    const database = client.db("safer_passwords");
+    const database = client.db(process.env.MONGO_DB_NAME);
 
     const originalMasterPassword = await readMasterPassword();
 
@@ -55,7 +57,6 @@ async function main() {
       console.log("Now you want to know one password, eh?");
       const { key } = await askGetPasswordQuestions();
       try {
-        console.log(key);
         const password = await readPassword(key, masterPassword, database);
         console.log(`Your ${key} password is ${password}`);
       } catch (error) {
