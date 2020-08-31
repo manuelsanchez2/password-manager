@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const { MongoClient } = require("mongodb");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const createPasswordsRouter = require("./routes/passwords");
 const createUsersRouter = require("./routes/users");
 
@@ -12,7 +13,7 @@ const client = new MongoClient(process.env.MONGO_URL, {
 
 const app = express();
 
-const port = 3001;
+const port = 3000;
 
 async function main() {
   await client.connect();
@@ -20,6 +21,7 @@ async function main() {
   const masterPassword = process.env.MASTER_PASSWORD;
 
   app.use(bodyParser.json());
+  app.use(cookieParser());
 
   app.use((request, response, next) => {
     console.log(`Request ${request.method} on ${request.url}`);
@@ -27,13 +29,7 @@ async function main() {
   });
 
   app.use("/api/passwords", createPasswordsRouter(database, masterPassword));
-  app.use(
-    "/api/users",
-    createUsersRouter(database, {
-      email: "manusansan22@gmail.com",
-      password: "123",
-    })
-  );
+  app.use("/api/users", createUsersRouter(database));
   // app.use("/api/users/login", verifyUser);
 
   app.listen(port, () => {

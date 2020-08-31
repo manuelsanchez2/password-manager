@@ -1,7 +1,6 @@
 const express = require("express");
 const { readPassword, writePassword } = require("../libraries/passwords");
-
-const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
 
 function createPasswordsRouter(database, masterPassword) {
   const router = express.Router();
@@ -9,6 +8,13 @@ function createPasswordsRouter(database, masterPassword) {
   router.get("/:name", async (request, response) => {
     try {
       const { name } = request.params;
+      const { authToken } = request.cookies;
+      const { email } = jwt.verify(authToken, process.env.JWT_SECRET);
+      console.log(`Allow access to ${email}`);
+
+      if (!email) {
+        return response.status(403).send("No access!");
+      }
       const password = await readPassword(name, masterPassword, database);
       if (!password) {
         response.status(404).send(`Password ${name} not found`);
