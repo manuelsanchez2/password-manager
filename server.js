@@ -13,7 +13,7 @@ const client = new MongoClient(process.env.MONGO_URL, {
 
 const app = express();
 
-const port = 3000;
+const port = 3333;
 
 async function main() {
   await client.connect();
