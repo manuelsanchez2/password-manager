@@ -13,6 +13,11 @@ const client = new MongoClient(process.env.MONGO_URL, {
 const app = express();
 app.use(bodyParser.json());
 
+app.use((request, response, next) => {
+  console.log(`Request ${request.method} on ${request.url}`);
+  next();
+});
+
 const port = 3000;
 
 async function main() {
@@ -24,17 +29,27 @@ async function main() {
     try {
       const { name } = request.params;
       const password = await readPassword(name, masterPassword, database);
+      if (!password) {
+        response.status(404).send(`Password ${name} not found`);
+        return;
+      }
       response.status(200).send(password);
     } catch (error) {
-      console.log("mal mal mal", error);
+      console.error(error);
+      response.status(500).send(error.message);
     }
   });
 
   app.post("/api/passwords", async (request, response) => {
-    console.log("POST on /api/passwords");
-    const { name, value } = request.body;
-    await writePassword(name, value, masterPassword, database);
-    response.status(201).send("Password created. Well done!");
+    try {
+      console.log("POST on /api/passwords");
+      const { name, value } = request.body;
+      await writePassword(name, value, masterPassword, database);
+      response.status(201).send("Password created. Well done!");
+    } catch (error) {
+      console.error(error);
+      response.status(500).send(error.message);
+    }
   });
   app.listen(port, () => {
     console.log(`App is listening on http://localhost:${port}`);

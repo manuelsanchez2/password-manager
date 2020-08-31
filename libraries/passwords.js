@@ -5,6 +5,9 @@ const fs = require("fs").promises;
 async function readPassword(key, masterPassword, database) {
   const collection = database.collection("passwords");
   const password = await collection.findOne({ name: key });
+  if (!password) {
+    return null;
+  }
   const decryptedPassword = decrypt(password.value, masterPassword);
   return decryptedPassword;
 }
