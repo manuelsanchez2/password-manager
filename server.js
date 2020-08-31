@@ -4,6 +4,7 @@ const express = require("express");
 const { MongoClient } = require("mongodb");
 const bodyParser = require("body-parser");
 const createPasswordsRouter = require("./routes/passwords");
+const createUsersRouter = require("./routes/users");
 
 const client = new MongoClient(process.env.MONGO_URL, {
   useUnifiedTopology: true,
@@ -11,7 +12,7 @@ const client = new MongoClient(process.env.MONGO_URL, {
 
 const app = express();
 
-const port = 3000;
+const port = 3001;
 
 async function main() {
   await client.connect();
@@ -26,6 +27,14 @@ async function main() {
   });
 
   app.use("/api/passwords", createPasswordsRouter(database, masterPassword));
+  app.use(
+    "/api/users",
+    createUsersRouter(database, {
+      email: "manusansan22@gmail.com",
+      password: "123",
+    })
+  );
+  // app.use("/api/users/login", verifyUser);
 
   app.listen(port, () => {
     console.log(`App is listening on http://localhost:${port}`);
