@@ -30,7 +30,6 @@ function createUsersRouter(database) {
       const token = jwt.sign({ email }, process.env.JWT_SECRET, {
         expiresIn: "360s",
       });
-      console.log(token);
       response.setHeader("Set-Cookie", `authToken=${token};path=/;Max-Age=360`);
       response.send("Logged in");
     } catch (error) {
