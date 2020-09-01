@@ -1,6 +1,10 @@
 require("dotenv").config();
 const express = require("express");
-const { readPassword, writePassword } = require("../libraries/passwords");
+const {
+  readPassword,
+  writePassword,
+  deletePassword,
+} = require("../libraries/passwords");
 const jwt = require("jsonwebtoken");
 const { encrypt } = require("../libraries/crypto");
 
@@ -83,6 +87,28 @@ function createPasswordsRouter(database, masterPassword) {
         }
       );
       response.status(200).send("Updated");
+    } catch (error) {
+      console.error(error);
+      response.status(500).send(error.message);
+    }
+  });
+
+  router.delete("/:name", async (request, response) => {
+    try {
+      const { name } = request.params;
+
+      const existingPassword = await readPassword(
+        name,
+        masterPassword,
+        database
+      );
+      if (!existingPassword) {
+        response.status(404).send("Password doesn't exists");
+        return;
+      }
+
+      await deletePassword(name, database);
+      response.status(200).send("Deleted");
     } catch (error) {
       console.error(error);
       response.status(500).send(error.message);

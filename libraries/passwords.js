@@ -18,6 +18,11 @@ async function writePassword(key, password, masterPassword, database) {
   await collection.insertOne({ name: key, value: encryptedPassword });
 }
 
+async function deletePassword(name, database) {
+  const collection = database.collection("passwords");
+  await collection.deleteOne({ name: name });
+}
+
 async function readMasterPassword() {
   try {
     const masterPassword = await fs.readFile("./masterPassword", "utf-8");
@@ -32,5 +37,6 @@ async function writeMasterPassword(masterPassword) {
 
 exports.readPassword = readPassword;
 exports.writePassword = writePassword;
+exports.deletePassword = deletePassword;
 exports.readMasterPassword = readMasterPassword;
 exports.writeMasterPassword = writeMasterPassword;
