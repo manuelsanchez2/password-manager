@@ -13,7 +13,7 @@ const client = new MongoClient(process.env.MONGO_URL, {
 
 const app = express();
 
-const port = 3333;
+const port = 3000;
 
 async function main() {
   await client.connect();
@@ -30,7 +30,6 @@ async function main() {
 
   app.use("/api/passwords", createPasswordsRouter(database, masterPassword));
   app.use("/api/users", createUsersRouter(database));
-  // app.use("/api/users/login", verifyUser);
 
   app.listen(port, () => {
     console.log(`App is listening on http://localhost:${port}`);

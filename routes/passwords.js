@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const { readPassword, writePassword } = require("../libraries/passwords");
 const jwt = require("jsonwebtoken");
@@ -10,6 +11,7 @@ function createPasswordsRouter(database, masterPassword) {
       const { name } = request.params;
       const { authToken } = request.cookies;
       const { email } = jwt.verify(authToken, process.env.JWT_SECRET);
+      console.log(email);
       console.log(`Allow access to ${email}`);
 
       if (!email) {
@@ -31,6 +33,17 @@ function createPasswordsRouter(database, masterPassword) {
     try {
       console.log("POST on /api/passwords");
       const { name, value } = request.body;
+
+      const existingPassword = await readPassword(
+        name,
+        masterPassword,
+        database
+      );
+      if (existingPassword) {
+        response.status(409).send("Password already exists");
+        return;
+      }
+
       await writePassword(name, value, masterPassword, database);
       response.status(201).send("Password created. Well done!");
     } catch (error) {
