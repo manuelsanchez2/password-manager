@@ -5,6 +5,9 @@ const fs = require("fs").promises;
 async function readPassword(key, masterPassword, database) {
   const collection = database.collection("passwords");
   const password = await collection.findOne({ name: key });
+  if (!password) {
+    return null;
+  }
   const decryptedPassword = decrypt(password.value, masterPassword);
   return decryptedPassword;
 }
@@ -13,6 +16,11 @@ async function writePassword(key, password, masterPassword, database) {
   const collection = database.collection("passwords");
   const encryptedPassword = encrypt(password, masterPassword);
   await collection.insertOne({ name: key, value: encryptedPassword });
+}
+
+async function deletePassword(name, database) {
+  const collection = database.collection("passwords");
+  await collection.deleteOne({ name: name });
 }
 
 async function readMasterPassword() {
@@ -29,5 +37,6 @@ async function writeMasterPassword(masterPassword) {
 
 exports.readPassword = readPassword;
 exports.writePassword = writePassword;
+exports.deletePassword = deletePassword;
 exports.readMasterPassword = readMasterPassword;
 exports.writeMasterPassword = writeMasterPassword;
